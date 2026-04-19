@@ -115,3 +115,15 @@ symbolDictionaries = {
 		"displayName": _("Biblical Hebrew")
 	},
 }
+
+# Custom speech dictionaries
+# Speech dictionary files reside in `addon/speechDicts/` and are named `<name>.dic`.
+# Each key is the name of the dictionary, with keys inside recording the following attributes:
+# displayName (name of the dictionary shown to users and translatable),
+# mandatory (True when always enabled, False when not).
+speechDictionaries = {
+	"greek": {
+		"displayName": _("Polytonic Greek (Dutch Erasmian)"),
+		"mandatory": False,
+	},
+}

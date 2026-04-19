@@ -195,6 +195,15 @@ def generateManifest(source, dest):
 				manifest_symbolDictionaries.append(f"{key} = {val}")
 		manifest += "\n".join(manifest_symbolDictionaries) + "\n"
 
+	# Custom speech dictionaries
+	if getattr(buildVars, "speechDictionaries", {}):
+		manifest_speechDictionaries = ["\n[speechDictionaries]"]
+		for dictionary in buildVars.speechDictionaries.keys():
+			manifest_speechDictionaries.append(f"[[{dictionary}]]")
+			for key, val in buildVars.speechDictionaries[dictionary].items():
+				manifest_speechDictionaries.append(f"{key} = {val}")
+		manifest += "\n".join(manifest_speechDictionaries) + "\n"
+
 	with codecs.open(dest, "w", "utf-8") as f:
 		f.write(manifest)
 
@@ -225,6 +234,15 @@ def generateTranslatedManifest(source, language, out):
 			# Fetch display name only.
 			result_symbolDictionaries.append(f"displayName = {_(buildVars.symbolDictionaries[dictionary]['displayName'])}")
 		result += "\n".join(result_symbolDictionaries) + "\n"
+
+	# Custom speech dictionaries
+	if getattr(buildVars, "speechDictionaries", {}):
+		result_speechDictionaries = ["\n[speechDictionaries]"]
+		for dictionary in buildVars.speechDictionaries.keys():
+			result_speechDictionaries.append(f"[[{dictionary}]]")
+			# Fetch display name only.
+			result_speechDictionaries.append(f"displayName = {_(buildVars.speechDictionaries[dictionary]['displayName'])}")
+		result += "\n".join(result_speechDictionaries) + "\n"
 
 	with codecs.open(out, "w", "utf-8") as f:
 		f.write(result)
