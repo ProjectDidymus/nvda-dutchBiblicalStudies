@@ -126,4 +126,8 @@ speechDictionaries = {
 		"displayName": _("Polytonic Greek (Dutch Erasmian)"),
 		"mandatory": False,
 	},
+	"hebrew": {
+		"displayName": _("Biblical Hebrew (Dutch pronunciation)"),
+		"mandatory": False,
+	},
 }

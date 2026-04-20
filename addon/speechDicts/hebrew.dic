@@ -1,0 +1,138 @@
+# Biblical Hebrew speech dictionary for Dutch TTS (Tiberian/Erasmian pronunciation).
+# Transliterates pointed Hebrew into Dutch-phonetic text before speech.
+# Fields: pattern<TAB>replacement<TAB>caseSensitive<TAB>type
+# type 0 = ANYWHERE (literal), type 1 = REGEXP.
+# Order matters: regex strips and reorder rules must precede literal substitutions.
+
+# ====================================================================
+# Section 1: Strip cantillation marks and direction characters.
+# Removes the extended cantillation range that liblouis discards
+# (hbo-ihbc-rules.uti:51), keeping only atnach, zaqef qatan,
+# sof pasuq, and maqaf for later punctuation mapping.
+# ====================================================================
+[\u0592\u0593\u0595-\u05A1\u05A3-\u05AD\u05BD\u05BF]		0	1
+[\u200E\u200F\u202D\u202E]		0	1
+
+# ====================================================================
+# Section 2: Dagesh reorder for BKP consonants (regex, type 1).
+# Moves dagesh from after the letter (with any niqqud in between)
+# to immediately before the letter, so Section 6 literal rules can
+# match dagesh+letter directly. Mirrors hbo-common-rules.uti:58.
+# Five rules: bet, kaf, kaf-sofit, pe, pe-sofit.
+# ====================================================================
+(ב)([\u05B0-\u05BB\u05C7]*)ּ	ּ\1\2	0	1
+(כ)([\u05B0-\u05BB\u05C7]*)ּ	ּ\1\2	0	1
+(ך)([\u05B0-\u05BB\u05C7]*)ּ	ּ\1\2	0	1
+(פ)([\u05B0-\u05BB\u05C7]*)ּ	ּ\1\2	0	1
+(ף)([\u05B0-\u05BB\u05C7]*)ּ	ּ\1\2	0	1
+
+# ====================================================================
+# Section 3: Shin/sin dot normalization (literal, type 0).
+# Must precede bare-shin fallback in Section 7.
+# ====================================================================
+שׁ	sh	0	0
+שׂ	s	0	0
+
+# ====================================================================
+# Section 4: Matres lectionis — vowel + silent letter (literal, type 0).
+# Two-character long-vowel combinations where the second character
+# is silent. Must precede single-char consonant rules for vav/yod.
+# ====================================================================
+וֹ	o	0	0
+וּ	oe	0	0
+ֵי	e	0	0
+ִי	ie	0	0
+ֹי	o	0	0
+
+# ====================================================================
+# Section 5: Sheva disambiguation (regex, type 1).
+# Must fire before consonants are substituted.
+# Rules ordered most-specific first.
+# Rule 1: double sheva — first silent, second vocal (drop first, keep second as e).
+# Rule 2: word-final sheva — silent (not followed by Hebrew letter or niqqud).
+# Rule 3: closed-syllable sheva after short vowel — silent.
+# Rule 4 (fallback): remaining sheva handled as 'e' in Section 8.
+# ====================================================================
+([\u05D0-\u05EA])ְ([\u05D0-\u05EA])ְ	\1\2e	0	1
+ְ(?![\u0591-\u05C7\u05D0-\u05EA])		0	1
+([ִֶַֻ])([\u05D0-\u05EA])ְ	\1\2	0	1
+
+# ====================================================================
+# Section 6: Dagesh + BKP consonants (post-reorder form, literal, type 0).
+# After Section 2 the dagesh sits immediately before the consonant.
+# Tav is omitted here (no alternation per user decision).
+# Final rule strips any stray dagesh (on gimel, dalet, tav, etc.).
+# ====================================================================
+ּב	b	0	0
+ּכ	k	0	0
+ּך	k	0	0
+ּפ	p	0	0
+ּף	p	0	0
+ּ		0	0
+
+# ====================================================================
+# Section 7: Consonants (single chars, including final/sofit forms).
+# ====================================================================
+א	'	0	0
+ב	v	0	0
+ג	g	0	0
+ד	d	0	0
+ה	h	0	0
+ו	w	0	0
+ז	z	0	0
+ח	ch	0	0
+ט	t	0	0
+י	j	0	0
+כ	ch	0	0
+ך	ch	0	0
+ל	l	0	0
+מ	m	0	0
+ם	m	0	0
+נ	n	0	0
+ן	n	0	0
+ס	s	0	0
+ע	'	0	0
+פ	f	0	0
+ף	f	0	0
+צ	ts	0	0
+ץ	ts	0	0
+ק	k	0	0
+ר	r	0	0
+ש	sh	0	0
+ת	t	0	0
+
+# ====================================================================
+# Section 8: Vowel points (niqqud, literal, type 0).
+# Sheva fallback here handles any vocal sheva not caught by Section 5.
+# ====================================================================
+ְ	e	0	0
+ַ	a	0	0
+ָ	aa	0	0
+ׇ	o	0	0
+ֶ	e	0	0
+ֵ	e	0	0
+ִ	ie	0	0
+ֹ	o	0	0
+ֻ	oe	0	0
+ֱ	e	0	0
+ֲ	a	0	0
+ֳ	o	0	0
+ֺ	o	0	0
+
+# ====================================================================
+# Section 9: Accents → punctuation (literal, type 0).
+# In-place replacement; exact word position not needed for TTS pausing.
+# atnach (U+0591) → semicolon, zaqef qatan (U+0594) → comma,
+# sof pasuq (U+05C3) → period, maqaf (U+05BE) → hyphen.
+# ====================================================================
+֑	;	0	0
+֔	,	0	0
+׃	.	0	0
+־	-	0	0
+
+# ====================================================================
+# Section 10: Miscellaneous Hebrew punctuation (literal, type 0).
+# Paseq (U+05C0) stripped (word-internal separator, not needed for TTS).
+# Gershayim and geresh (abbreviation marks) left untouched.
+# ====================================================================
+׀		0	0
