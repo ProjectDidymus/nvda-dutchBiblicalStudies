@@ -1,8 +1,3 @@
-# NVDA add-on template SCONSTRUCT file
-# Copyright (C) 2012-2025 Rui Batista, Noelia Martinez, Joseph Lee
-# This file is covered by the GNU General Public License.
-# See the file COPYING.txt for more details.
-
 import os
 import os.path
 import sys
@@ -19,9 +14,7 @@ from SCons.Script import EnsurePythonVersion, Variables, BoolVariable, Environme
 # Imports for type hints
 from SCons.Node import FS
 
-# Add-on localization exchange facility and the template requires Python 3.10.
-# For best practice, use Python 3.11 or later to align with NVDA development.
-EnsurePythonVersion(3, 10)
+EnsurePythonVersion(3, 11)
 
 # Bytecode should not be written for build vars module to keep the repository root folder clean.
 sys.dont_write_bytecode = True
