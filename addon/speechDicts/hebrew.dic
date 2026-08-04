@@ -2,76 +2,105 @@
 # Transliterates pointed Hebrew into Dutch-phonetic text before speech.
 # Fields: pattern<TAB>replacement<TAB>caseSensitive<TAB>type
 # type 0 = ANYWHERE (literal), type 1 = REGEXP.
-# Order matters: regex strips and reorder rules must precede literal substitutions.
+# BHS/WLC text stores combining marks in Unicode canonical order: the vowel
+# sits between a consonant and its dagesh or shin/sin dot. Multi-mark rules
+# therefore tolerate intervening marks instead of assuming adjacency.
+# Sections cascade: every rule rewrites the output of the previous ones.
 
 # ====================================================================
-# Section 1: Strip cantillation marks and direction characters.
-# Removes the extended cantillation range that liblouis discards
-# (hbo-ihbc-rules.uti:51), keeping only atnach, zaqef qatan,
-# sof pasuq, and maqaf for later punctuation mapping.
+# Section 1: Strip direction and formatting characters.
 # ====================================================================
-[\u0592\u0593\u0595-\u05A1\u05A3-\u05AD\u05BD\u05BF]		0	1
-[\u200E\u200F\u202D\u202E]		0	1
+[\u200E\u200F\u202A-\u202E\u2066-\u2069\uFEFF]		0	1
 
 # ====================================================================
-# Section 2: Dagesh reorder for BKP consonants (regex, type 1).
-# Moves dagesh from after the letter (with any niqqud in between)
-# to immediately before the letter, so Section 6 literal rules can
-# match dagesh+letter directly. Mirrors hbo-common-rules.uti:58.
-# Five rules: bet, kaf, kaf-sofit, pe, pe-sofit.
+# Section 2: Strip cantillation except atnach (U+0591) and zaqef qatan
+# (U+0594), plus meteg, rafe, paseq, puncta extraordinaria and nun
+# hafukha. Must run before any adjacency-sensitive rule.
 # ====================================================================
-(ב)([\u05B0-\u05BB\u05C7]*)ּ	ּ\1\2	0	1
-(כ)([\u05B0-\u05BB\u05C7]*)ּ	ּ\1\2	0	1
-(ך)([\u05B0-\u05BB\u05C7]*)ּ	ּ\1\2	0	1
-(פ)([\u05B0-\u05BB\u05C7]*)ּ	ּ\1\2	0	1
-(ף)([\u05B0-\u05BB\u05C7]*)ּ	ּ\1\2	0	1
+[\u0592\u0593\u0595-\u05AF\u05BD\u05BF\u05C0\u05C4-\u05C6]		0	1
 
 # ====================================================================
-# Section 3: Shin/sin dot normalization (literal, type 0).
-# Must precede bare-shin fallback in Section 7.
+# Section 3: Relocate pause accents to the end of the word.
+# Atnach and zaqef qatan mark the stressed syllable mid-word; the pause
+# punctuation belongs after the word. The continuation class excludes
+# maqaf and sof pasuq so punctuation never crosses a word boundary.
 # ====================================================================
-שׁ	sh	0	0
-שׂ	s	0	0
+\u0591([\u05B0-\u05BC\u05C1\u05C2\u05C7\u05D0-\u05EA]*)	\1;	0	1
+\u0594([\u05B0-\u05BC\u05C1\u05C2\u05C7\u05D0-\u05EA]*)	\1,	0	1
 
 # ====================================================================
-# Section 4: Matres lectionis — vowel + silent letter (literal, type 0).
-# Two-character long-vowel combinations where the second character
-# is silent. Must precede single-char consonant rules for vav/yod.
+# Section 4: Shin/sin resolution.
+# Sin becomes samech (same phoneme) while tolerating the niqqud that
+# canonically sits between shin and the sin dot; all remaining dots
+# are shin dots and are stripped, so bare shin renders 'sh' below.
+# ====================================================================
+ש([\u05B0-\u05BC\u05C7]*)\u05C2	ס\1	0	1
+[\u05C1\u05C2]		0	1
+
+# ====================================================================
+# Section 5: Furtive patach.
+# A patach under word-final chet/ayin/mapiq-he is spoken before it.
+# ====================================================================
+([חע])\u05B7(?![\u05B0-\u05BC\u05C1\u05C2\u05C7\u05D0-\u05EA])	a\1	0	1
+ה\u05B7\u05BC(?![\u05B0-\u05BC\u05C1\u05C2\u05C7\u05D0-\u05EA])	ah	0	1
+
+# ====================================================================
+# Section 6: Sheva disambiguation. Order: final, double, closed syllable.
+# Rule 1: word-final sheva is silent (also before maqaf and sof pasuq).
+# Rule 2: double sheva: first silent, second vocal.
+# Rule 3: sheva after a short vowel closes the syllable and is silent;
+# the dagesh guard keeps sheva under a dagesh forte letter vocal.
+# Accepted limits: word-final double sheva renders 'e'; sheva after
+# qamats stays vocal (no qamats qatan heuristic).
+# ====================================================================
+\u05B0(?![\u05B0-\u05BC\u05C1\u05C2\u05C7\u05D0-\u05EA])		0	1
+([\u05D0-\u05EA])\u05B0([\u05D0-\u05EA])\u05B0	\1\2e	0	1
+([\u05B4\u05B6\u05B7\u05BB]\u05BC?)([\u05D0-\u05EA])\u05B0(?!\u05BC)	\1\2	0	1
+
+# ====================================================================
+# Section 7: Vav matres lectionis (holam-vav, shuruq).
+# Adjacency is safe here: a mater vav carries no niqqud of its own, so
+# nothing intervenes. A consonantal vav with dagesh forte has its vowel
+# in between and falls through to Section 8.
 # ====================================================================
 וֹ	o	0	0
 וּ	oe	0	0
-ֵי	e	0	0
-ִי	ie	0	0
-ֹי	o	0	0
 
 # ====================================================================
-# Section 5: Sheva disambiguation (regex, type 1).
-# Must fire before consonants are substituted.
-# Rules ordered most-specific first.
-# Rule 1: double sheva — first silent, second vocal (drop first, keep second as e).
-# Rule 2: word-final sheva — silent (not followed by Hebrew letter or niqqud).
-# Rule 3: closed-syllable sheva after short vowel — silent.
-# Rule 4 (fallback): remaining sheva handled as 'e' in Section 8.
+# Section 8: Dagesh resolution.
+# Gemination doubles the Hebrew letter so the copy flows through the
+# later sections; only single-letter outputs double (never sh/ch/ts
+# digraphs or the semivowels vav/yod, which Dutch TTS mangles).
+# The lookbehind (full vowel or dagesh, not sheva) separates forte
+# from lene; BKP forte hardens and doubles, BKP lene hardens only.
+# Tav keeps 't' in both states (no spirantization).
+# The final rule strips every remaining dagesh: mapiq, lene tav,
+# forte in digraphs and semivowels.
 # ====================================================================
-([\u05D0-\u05EA])ְ([\u05D0-\u05EA])ְ	\1\2e	0	1
-ְ(?![\u0591-\u05C7\u05D0-\u05EA])		0	1
-([ִֶַֻ])([\u05D0-\u05EA])ְ	\1\2	0	1
-
-# ====================================================================
-# Section 6: Dagesh + BKP consonants (post-reorder form, literal, type 0).
-# After Section 2 the dagesh sits immediately before the consonant.
-# Tav is omitted here (no alternation per user decision).
-# Final rule strips any stray dagesh (on gimel, dalet, tav, etc.).
-# ====================================================================
-ּב	b	0	0
-ּכ	k	0	0
-ּך	k	0	0
-ּפ	p	0	0
-ּף	p	0	0
+(?<=[\u05B1-\u05BC\u05C7])([גדזטלמנסקת])([\u05B0-\u05BB\u05C7]?)\u05BC	\1\1\2	0	1
+(?<=[\u05B1-\u05BC\u05C7])ב([\u05B0-\u05BB\u05C7]?)\u05BC	bb\1	0	1
+(?<=[\u05B1-\u05BC\u05C7])כ([\u05B0-\u05BB\u05C7]?)\u05BC	kk\1	0	1
+(?<=[\u05B1-\u05BC\u05C7])פ([\u05B0-\u05BB\u05C7]?)\u05BC	pp\1	0	1
+ב([\u05B0-\u05BB\u05C7]?)\u05BC	b\1	0	1
+כ([\u05B0-\u05BB\u05C7]?)\u05BC	k\1	0	1
+ך([\u05B0-\u05BB\u05C7]?)\u05BC	k\1	0	1
+פ([\u05B0-\u05BB\u05C7]?)\u05BC	p\1	0	1
+ף([\u05B0-\u05BB\u05C7]?)\u05BC	p\1	0	1
 ּ		0	0
 
 # ====================================================================
-# Section 7: Consonants (single chars, including final/sofit forms).
+# Section 9: Yod matres lectionis, with guards against consonantal yod
+# (a yod carrying its own niqqud or dagesh). Runs after Section 8 so a
+# doubled letter has restored vowel-yod adjacency.
+# ====================================================================
+\u05B8יו(?![\u05B0-\u05BC\u05C1\u05C2\u05C7\u05D0-\u05EA])	aaw	0	1
+\u05B5י(?![\u05B0-\u05BC\u05C7])	e	0	1
+\u05B6י(?![\u05B0-\u05BC\u05C7])	e	0	1
+\u05B4י(?![\u05B0-\u05BC\u05C7])	ie	0	1
+\u05B9י(?![\u05B0-\u05BC\u05C7])	o	0	1
+
+# ====================================================================
+# Section 10: Consonants (single chars, including final/sofit forms).
 # ====================================================================
 א	'	0	0
 ב	v	0	0
@@ -102,8 +131,9 @@
 ת	t	0	0
 
 # ====================================================================
-# Section 8: Vowel points (niqqud, literal, type 0).
-# Sheva fallback here handles any vocal sheva not caught by Section 5.
+# Section 11: Vowel points (niqqud).
+# Sheva here is the vocal fallback for what Section 6 left in place.
+# Bare hiriq is short 'i'; the long 'ie' comes from hiriq-yod above.
 # ====================================================================
 ְ	e	0	0
 ַ	a	0	0
@@ -111,28 +141,16 @@
 ׇ	o	0	0
 ֶ	e	0	0
 ֵ	e	0	0
-ִ	ie	0	0
+ִ	i	0	0
 ֹ	o	0	0
+ֺ	o	0	0
 ֻ	oe	0	0
 ֱ	e	0	0
 ֲ	a	0	0
 ֳ	o	0	0
-ֺ	o	0	0
 
 # ====================================================================
-# Section 9: Accents → punctuation (literal, type 0).
-# In-place replacement; exact word position not needed for TTS pausing.
-# atnach (U+0591) → semicolon, zaqef qatan (U+0594) → comma,
-# sof pasuq (U+05C3) → period, maqaf (U+05BE) → hyphen.
+# Section 12: Hebrew punctuation.
 # ====================================================================
-֑	;	0	0
-֔	,	0	0
 ׃	.	0	0
 ־	-	0	0
-
-# ====================================================================
-# Section 10: Miscellaneous Hebrew punctuation (literal, type 0).
-# Paseq (U+05C0) stripped (word-internal separator, not needed for TTS).
-# Gershayim and geresh (abbreviation marks) left untouched.
-# ====================================================================
-׀		0	0
