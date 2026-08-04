@@ -62,6 +62,14 @@ class GreekDictTests(unittest.TestCase):
 			"hè agápè makrotumei, chrèstéuetai hè agápè, oe zèloi, [hè agápè] oe perperéuetai,",
 		)
 
+	def test_uppercase_iota_subscript_via_case_folding(self) -> None:
+		"""Uppercase iota-subscript forms match the lowercase entries case-insensitively.
+
+		U+1FAF (standalone, via the WORD twin of U+1F67) and U+1FA8 word-initially.
+		"""
+		self.assertEqual(subStrict(self.dictionary, "ᾯ"), "hooi")
+		self.assertEqual(subStrict(self.dictionary, "ᾨδή"), "ooidé")
+
 	def test_unambiguous_punctuation_codepoints(self) -> None:
 		"""U+037E (Greek question mark) and U+0387 (Greek ano teleia) need no context."""
 		self.assertEqual(subStrict(self.dictionary, "; ·"), "? ;")
