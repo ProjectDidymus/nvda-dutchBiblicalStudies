@@ -1,8 +1,24 @@
 ﻿# Polytonic Greek speech dictionary for Dutch TTS (Erasmian pronunciation).
 # Transliterates polytonic Greek into Dutch-phonetic text before speech.
 # Fields: pattern<TAB>replacement<TAB>caseSensitive<TAB>type
+# type 0 = ANYWHERE, type 1 = REGEXP, type 2 = WORD,
 # type 3 = PART_OF_WORD, type 4 = START_OF_WORD.
+# Every word-initial (type 4) entry has a WORD (type 2) twin below it:
+# type 4 requires a following word character, so it never matches when
+# the pattern is a complete standalone word (frequent for articles).
+# Uppercase forms match through case-insensitive folding unless listed.
+# Known limitation: crasis forms (e.g. κἀγώ) carry a mid-word breathing
+# and pass through untransliterated.
 # Order matters: multi-char / breathing rules must precede single-char rules.
+
+# ====================================================================
+# Section 0: Punctuation needing Greek context (regex, type 1).
+# Must run first, while the preceding character is still Greek.
+# ASCII semicolon and middle dot also occur in other languages, so
+# they are only converted directly after a Greek letter.
+# ====================================================================
+(?<=[\u0370-\u03FF\u1F00-\u1FFF]);	?	0	1
+(?<=[\u0370-\u03FF\u1F00-\u1FFF])\u00B7	;	0	1
 
 # ====================================================================
 # Section 1: Diphthongs with asper on second vowel (word-initial).
@@ -11,84 +27,148 @@
 αἱ	hai	0	4
 αἱ	hai	0	2
 αἵ	hái	0	4
+αἵ	hái	0	2
 αἳ	hai	0	4
+αἳ	hai	0	2
 αἷ	hai	0	4
+αἷ	hai	0	2
 εἱ	hei	0	4
+εἱ	hei	0	2
 εἵ	héi	0	4
+εἵ	héi	0	2
 εἳ	hei	0	4
+εἳ	hei	0	2
 εἷ	hei	0	4
+εἷ	hei	0	2
 οἱ	hoi	0	4
 οἱ	hoi	0	2
 οἵ	hói	0	4
+οἵ	hói	0	2
 οἳ	hoi	0	4
+οἳ	hoi	0	2
 οἷ	hoi	0	4
+οἷ	hoi	0	2
 αὑ	hau	0	4
+αὑ	hau	0	2
 αὕ	háu	0	4
+αὕ	háu	0	2
 αὓ	hau	0	4
+αὓ	hau	0	2
 αὗ	hau	0	4
 αὗ	hau	0	2
 εὑ	heu	0	4
+εὑ	heu	0	2
 εὕ	héu	0	4
+εὕ	héu	0	2
 εὓ	heu	0	4
+εὓ	heu	0	2
 εὗ	heu	0	4
+εὗ	heu	0	2
 οὑ	hoe	0	4
+οὑ	hoe	0	2
 οὕ	hóe	0	4
+οὕ	hóe	0	2
 οὓ	hoe	0	4
+οὓ	hoe	0	2
 οὗ	hoe	0	4
 οὗ	hoe	0	2
 υἱ	hui	0	4
+υἱ	hui	0	2
 υἵ	húi	0	4
+υἵ	húi	0	2
 υἳ	hui	0	4
+υἳ	hui	0	2
 υἷ	hui	0	4
+υἷ	hui	0	2
 
 # ====================================================================
 # Section 2: Diphthongs with lenis on second vowel (word-initial).
 # Lenis is silent; acute on second vowel moves to Dutch acute.
 # ====================================================================
 αἰ	ai	0	4
+αἰ	ai	0	2
 αἴ	ái	0	4
+αἴ	ái	0	2
 αἲ	ai	0	4
+αἲ	ai	0	2
 αἶ	ai	0	4
+αἶ	ai	0	2
 εἰ	ei	0	4
+εἰ	ei	0	2
 εἴ	éi	0	4
+εἴ	éi	0	2
 εἲ	ei	0	4
+εἲ	ei	0	2
 εἶ	ei	0	4
+εἶ	ei	0	2
 οἰ	oi	0	4
+οἰ	oi	0	2
 οἴ	ói	0	4
+οἴ	ói	0	2
 οἲ	oi	0	4
+οἲ	oi	0	2
 οἶ	oi	0	4
+οἶ	oi	0	2
 αὐ	au	0	4
+αὐ	au	0	2
 αὔ	áu	0	4
+αὔ	áu	0	2
 αὒ	au	0	4
+αὒ	au	0	2
 αὖ	au	0	4
+αὖ	au	0	2
 εὐ	eu	0	4
+εὐ	eu	0	2
 εὔ	éu	0	4
+εὔ	éu	0	2
 εὒ	eu	0	4
+εὒ	eu	0	2
 εὖ	eu	0	4
+εὖ	eu	0	2
 οὐ	oe	0	4
+οὐ	oe	0	2
 οὔ	óe	0	4
+οὔ	óe	0	2
 οὒ	oe	0	4
+οὒ	oe	0	2
 οὖ	oe	0	4
+οὖ	oe	0	2
 υἰ	ui	0	4
+υἰ	ui	0	2
 υἴ	úi	0	4
+υἴ	úi	0	2
 υἲ	ui	0	4
+υἲ	ui	0	2
 υἶ	ui	0	4
+υἶ	ui	0	2
 
 # ====================================================================
 # Section 3: Iota-subscriptum vowels with asper (word-initial).
 # ====================================================================
 ᾁ	hai	0	4
+ᾁ	hai	0	2
 ᾃ	hai	0	4
+ᾃ	hai	0	2
 ᾅ	hái	0	4
+ᾅ	hái	0	2
 ᾇ	hai	0	4
+ᾇ	hai	0	2
 ᾑ	hèi	0	4
+ᾑ	hèi	0	2
 ᾓ	hèi	0	4
+ᾓ	hèi	0	2
 ᾕ	héi	0	4
+ᾕ	héi	0	2
 ᾗ	hèi	0	4
+ᾗ	hèi	0	2
 ᾡ	hooi	0	4
+ᾡ	hooi	0	2
 ᾣ	hooi	0	4
+ᾣ	hooi	0	2
 ᾥ	hóói	0	4
+ᾥ	hóói	0	2
 ᾧ	hooi	0	4
+ᾧ	hooi	0	2
 
 ᾉ	hai	0	4
 ᾋ	hai	0	4
@@ -107,17 +187,29 @@
 # Section 4: Iota-subscriptum vowels with lenis (word-initial).
 # ====================================================================
 ᾀ	ai	0	4
+ᾀ	ai	0	2
 ᾂ	ai	0	4
+ᾂ	ai	0	2
 ᾄ	ái	0	4
+ᾄ	ái	0	2
 ᾆ	ai	0	4
+ᾆ	ai	0	2
 ᾐ	èi	0	4
+ᾐ	èi	0	2
 ᾒ	èi	0	4
+ᾒ	èi	0	2
 ᾔ	éi	0	4
+ᾔ	éi	0	2
 ᾖ	èi	0	4
+ᾖ	èi	0	2
 ᾠ	ooi	0	4
+ᾠ	ooi	0	2
 ᾢ	ooi	0	4
+ᾢ	ooi	0	2
 ᾤ	óói	0	4
+ᾤ	óói	0	2
 ᾦ	ooi	0	4
+ᾦ	ooi	0	2
 
 ᾈ	ai	0	4
 ᾊ	ai	0	4
@@ -136,66 +228,119 @@
 # Section 5: Single vowels with asper (word-initial).
 # ====================================================================
 ἁ	ha	0	4
+ἁ	ha	0	2
 ἅ	há	0	4
+ἅ	há	0	2
 ἃ	ha	0	4
+ἃ	ha	0	2
 ἇ	ha	0	4
+ἇ	ha	0	2
 ἑ	he	0	4
+ἑ	he	0	2
 ἕ	hé	0	4
+ἕ	hé	0	2
 ἓ	he	0	4
+ἓ	he	0	2
 ἡ	hè	0	4
+ἡ	hè	0	2
 ἥ	hé	0	4
+ἥ	hé	0	2
 ἣ	hè	0	4
+ἣ	hè	0	2
 ἧ	hè	0	4
+ἧ	hè	0	2
 ἱ	hi	0	4
+ἱ	hi	0	2
 ἵ	hí	0	4
+ἵ	hí	0	2
 ἳ	hi	0	4
+ἳ	hi	0	2
 ἷ	hi	0	4
+ἷ	hi	0	2
 ὁ	ho	0	4
+ὁ	ho	0	2
 ὅ	hó	0	4
+ὅ	hó	0	2
 ὃ	ho	0	4
+ὃ	ho	0	2
 ὑ	hu	0	4
+ὑ	hu	0	2
 ὕ	hú	0	4
+ὕ	hú	0	2
 ὓ	hu	0	4
+ὓ	hu	0	2
 ὗ	hu	0	4
+ὗ	hu	0	2
 ὡ	hoo	0	4
+ὡ	hoo	0	2
 ὥ	hóó	0	4
+ὥ	hóó	0	2
 ὣ	hoo	0	4
+ὣ	hoo	0	2
 ὧ	hoo	0	4
+ὧ	hoo	0	2
 
 # ====================================================================
 # Section 6: Single vowels with lenis (word-initial).
 # Lenis is silent; accent transfers to Dutch acute where present.
 # ====================================================================
 ἀ	a	0	4
+ἀ	a	0	2
 ἄ	á	0	4
+ἄ	á	0	2
 ἂ	a	0	4
+ἂ	a	0	2
 ἆ	a	0	4
+ἆ	a	0	2
 ἐ	e	0	4
+ἐ	e	0	2
 ἔ	é	0	4
+ἔ	é	0	2
 ἒ	e	0	4
+ἒ	e	0	2
 ἠ	è	0	4
+ἠ	è	0	2
 ἤ	é	0	4
+ἤ	é	0	2
 ἢ	è	0	4
+ἢ	è	0	2
 ἦ	è	0	4
+ἦ	è	0	2
 ἰ	i	0	4
+ἰ	i	0	2
 ἴ	í	0	4
+ἴ	í	0	2
 ἲ	i	0	4
+ἲ	i	0	2
 ἶ	i	0	4
+ἶ	i	0	2
 ὀ	o	0	4
+ὀ	o	0	2
 ὄ	ó	0	4
+ὄ	ó	0	2
 ὂ	o	0	4
+ὂ	o	0	2
 ὐ	u	0	4
+ὐ	u	0	2
 ὔ	ú	0	4
+ὔ	ú	0	2
 ὒ	u	0	4
+ὒ	u	0	2
 ὖ	u	0	4
+ὖ	u	0	2
 ὠ	oo	0	4
+ὠ	oo	0	2
 ὤ	óó	0	4
+ὤ	óó	0	2
 ὢ	oo	0	4
+ὢ	oo	0	2
 ὦ	oo	0	4
+ὦ	oo	0	2
 
 # ====================================================================
 # Section 7: Bare diphthongs (no breathing).
-# Accent on second vowel transfers to Dutch acute.
+# Accent on second vowel transfers to Dutch acute on the first vowel.
+# Acute entries cover both tonos (U+03xx) and oxia (U+1Fxx) codepoints.
 # ====================================================================
 αυ	au	0	3
 ευ	eu	0	3
@@ -207,12 +352,19 @@
 οι	oi	0	3
 υι	ui	0	3
 αύ	áu	0	3
+αύ	áu	0	3
+εύ	éu	0	3
 εύ	éu	0	3
 ού	óe	0	3
+ού	óe	0	3
 αί	ái	0	3
+αί	ái	0	3
+εί	éi	0	3
 εί	éi	0	3
 οί	ói	0	3
+οί	ói	0	3
 υί	úi	0	3
+υί	úi	0	3
 
 # ====================================================================
 # Section 8: Gamma-nasal clusters (pronounced as [ng]).
@@ -340,9 +492,8 @@
 ϡ	s	0	3
 
 # ====================================================================
-# Section 15: Greek punctuation.
+# Section 15: Unambiguous Greek punctuation codepoints.
+# The ASCII semicolon and U+00B7 variants are handled in Section 0.
 # ====================================================================
-;	?	0	3
-·	;	0	3
 ;	?	0	0
 ·	;	0	0
