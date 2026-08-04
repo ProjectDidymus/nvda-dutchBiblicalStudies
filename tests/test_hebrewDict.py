@@ -50,6 +50,10 @@ HAMMELECH = "\u05d4\u05b7\u05de\u05b6\u05bc\u05dc\u05b6\u05da\u05b0"
 ATTAH = "\u05d0\u05b7\u05ea\u05b8\u05bc\u05d4"
 # וַיִּקַּח — dagesh forte in qof directly after the dagesh of the yod
 VAYIQQACH = "\u05d5\u05b7\u05d9\u05b4\u05bc\u05e7\u05b7\u05bc\u05d7"
+# Elohim with a combining grapheme joiner / zero width joiner next to the
+# atnach, as produced by sources that use joiners to control mark ordering
+ELOHIM_CGJ = "\u05d0\u05b1\u05dc\u05b9\u05d4\u05b4\u034f\u0591\u05d9\u05dd"
+ELOHIM_ZWJ = "\u05d0\u05b1\u05dc\u05b9\u05d4\u05b4\u200d\u0591\u05d9\u05dd"
 # רוּחַ — furtive patach under word-final het
 RUACH = "\u05e8\u05d5\u05bc\u05d7\u05b7"
 # גָּבֹהַּ — mapiq he with furtive patach
@@ -64,6 +68,8 @@ ELAV = "\u05d0\u05b5\u05dc\u05b8\u05d9\u05d5"
 HEBREW_SAMPLES = (
 	GEN_1_1,
 	ELOHIM_ZAQEF,
+	ELOHIM_CGJ,
+	ELOHIM_ZWJ,
 	YISRAEL,
 	SHABBAT,
 	HAMMELECH,
@@ -137,6 +143,17 @@ class HebrewDictTests(unittest.TestCase):
 
 	def test_zaqef_relocation(self) -> None:
 		self.assertEqual(subStrict(self.dictionary, ELOHIM_ZAQEF), "'elohiem,")
+
+	def test_invisible_joiners_around_accents(self) -> None:
+		"""Joiners that sources insert to control mark ordering must not break the word."""
+		self.assertEqual(subStrict(self.dictionary, ELOHIM_CGJ), "'elohiem;")
+		self.assertEqual(subStrict(self.dictionary, ELOHIM_ZWJ), "'elohiem;")
+
+	def test_joiners_outside_hebrew_untouched(self) -> None:
+		"""The dictionary is global: emoji ZWJ sequences and Latin joiners must survive."""
+		family = "\U0001f468\u200d\U0001f469\u200d\U0001f467"
+		self.assertEqual(subStrict(self.dictionary, family), family)
+		self.assertEqual(subStrict(self.dictionary, "a\u200bb"), "a\u200bb")
 
 	def test_segol_yod_suffix(self) -> None:
 		self.assertEqual(subStrict(self.dictionary, ELECHA), "'elechaa")

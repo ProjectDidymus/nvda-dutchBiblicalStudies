@@ -8,9 +8,14 @@
 # Sections cascade: every rule rewrites the output of the previous ones.
 
 # ====================================================================
-# Section 1: Strip direction and formatting characters.
+# Section 1: Strip direction and formatting characters, and invisible
+# joiners (CGJ, ZWSP/ZWNJ/ZWJ, word joiner) that some sources insert
+# around Hebrew marks to control their ordering. Joiners are only
+# stripped next to a Hebrew character: this dictionary is global, and
+# emoji ZWJ sequences in other text must stay intact.
 # ====================================================================
 [\u200E\u200F\u202A-\u202E\u2066-\u2069\uFEFF]		0	1
+[\u034F\u200B-\u200D\u2060](?=[\u0590-\u05FF])|(?<=[\u0590-\u05FF])[\u034F\u200B-\u200D\u2060]		0	1
 
 # ====================================================================
 # Section 2: Strip cantillation except atnach (U+0591) and zaqef qatan
