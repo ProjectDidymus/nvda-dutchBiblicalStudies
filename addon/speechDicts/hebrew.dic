@@ -133,7 +133,8 @@
 # ====================================================================
 # Section 11: Vowel points (niqqud).
 # Sheva here is the vocal fallback for what Section 6 left in place.
-# Bare hiriq is short 'i'; the long 'ie' comes from hiriq-yod above.
+# Hiriq is 'ie', the Dutch spelling of /i/; the hiriq-yod mater rule
+# above exists to silence the yod, not to change the vowel.
 # ====================================================================
 ְ	e	0	0
 ַ	a	0	0
@@ -141,7 +142,7 @@
 ׇ	o	0	0
 ֶ	e	0	0
 ֵ	e	0	0
-ִ	i	0	0
+ִ	ie	0	0
 ֹ	o	0	0
 ֺ	o	0	0
 ֻ	oe	0	0

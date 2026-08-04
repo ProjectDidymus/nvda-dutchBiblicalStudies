@@ -96,16 +96,17 @@ class HebrewDictTests(unittest.TestCase):
 	def test_genesis_1_1(self) -> None:
 		"""Full verse: canonical shin/dagesh order, cantillation stripping, atnach, sof pasuq.
 
-		Vowel policy: bare hiriq is short "i" (majim), hiriq-yod is long "ie" (elohiem).
+		Vowel policy: hiriq is always Dutch "ie" (the spelling of /i/ for a Dutch synth);
+		the hiriq-yod mater rule exists to silence the yod, not to lengthen the vowel.
 		"""
 		self.assertEqual(
 			subStrict(self.dictionary, GEN_1_1),
-			"bere'shiet baaraa' 'elohiem; 'et hashaamajim we'et haa'aarets.",
+			"bere'shiet baaraa' 'elohiem; 'et hashaamajiem we'et haa'aarets.",
 		)
 
 	def test_sin_in_canonical_order(self) -> None:
 		"""Sin must be spoken "s" although the sin dot follows the sheva in the stream."""
-		self.assertEqual(subStrict(self.dictionary, YISRAEL), "jisraa'el")
+		self.assertEqual(subStrict(self.dictionary, YISRAEL), "jiesraa'el")
 
 	def test_bkp_forte_gemination(self) -> None:
 		self.assertEqual(subStrict(self.dictionary, SHABBAT), "shabbaat")
@@ -118,7 +119,7 @@ class HebrewDictTests(unittest.TestCase):
 
 	def test_forte_after_dagesh_cluster(self) -> None:
 		"""Gemination also fires when the previous letter carries a vowelless dagesh."""
-		self.assertEqual(subStrict(self.dictionary, VAYIQQACH), "wajikkach")
+		self.assertEqual(subStrict(self.dictionary, VAYIQQACH), "wajiekkach")
 
 	def test_furtive_patach(self) -> None:
 		self.assertEqual(subStrict(self.dictionary, RUACH), "roeach")

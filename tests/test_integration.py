@@ -18,7 +18,7 @@ from .test_greekDict import DUTCH, JOHN_1_1, greekCodepoints
 from .test_hebrewDict import GEN_1_1, hebrewCodepoints
 
 JOHN_1_1_SPOKEN = "en archèi èn ho lógos, kai ho lógos èn pros ton teón, kai teos èn ho lógos."
-GEN_1_1_SPOKEN = "bere'shiet baaraa' 'elohiem; 'et hashaamajim we'et haa'aarets."
+GEN_1_1_SPOKEN = "bere'shiet baaraa' 'elohiem; 'et hashaamajiem we'et haa'aarets."
 
 
 class MixedTextTests(unittest.TestCase):
