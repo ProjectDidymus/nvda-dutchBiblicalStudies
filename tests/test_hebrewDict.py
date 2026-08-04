@@ -56,6 +56,8 @@ ELOHIM_CGJ = "\u05d0\u05b1\u05dc\u05b9\u05d4\u05b4\u034f\u0591\u05d9\u05dd"
 ELOHIM_ZWJ = "\u05d0\u05b1\u05dc\u05b9\u05d4\u05b4\u200d\u0591\u05d9\u05dd"
 # רוּחַ — furtive patach under word-final het
 RUACH = "\u05e8\u05d5\u05bc\u05d7\u05b7"
+# \u05de\u05b4\u05d6\u05b0\u05d1\u05b5\u05bc\u05d7\u05b7 \u2014 furtive patach after tsere; silent sheva; lene bet with tsere and dagesh
+MIZBEACH = "\u05de\u05b4\u05d6\u05b0\u05d1\u05b5\u05bc\u05d7\u05b7"
 # גָּבֹהַּ — mapiq he with furtive patach
 GAVOAH = "\u05d2\u05b8\u05bc\u05d1\u05b9\u05d4\u05b7\u05bc"
 # לֶךְ־לְךָ — word-final sheva before maqaf
@@ -76,6 +78,7 @@ HEBREW_SAMPLES = (
 	ATTAH,
 	VAYIQQACH,
 	RUACH,
+	MIZBEACH,
 	GAVOAH,
 	LECH_LECHA,
 	ELECHA,
@@ -102,23 +105,25 @@ class HebrewDictTests(unittest.TestCase):
 	def test_genesis_1_1(self) -> None:
 		"""Full verse: canonical shin/dagesh order, cantillation stripping, atnach, sof pasuq.
 
-		Vowel policy: hiriq is always Dutch "ie" (the spelling of /i/ for a Dutch synth);
-		the hiriq-yod mater rule exists to silence the yod, not to lengthen the vowel.
+		Vowel policy, judged by Dutch orthography as a Dutch synth reads it:
+		hiriq is always "ie"; the e-vowels split three ways — "e" is vocal sheva
+		(Dutch unstressed e is schwa), "ê" is segol and hataf segol, "ee" is tsere.
+		The mater rules exist to silence the yod, not to change the vowel.
 		"""
 		self.assertEqual(
 			subStrict(self.dictionary, GEN_1_1),
-			"bere'shiet baaraa' 'elohiem; 'et hashaamajiem we'et haa'aarets.",
+			"beree'shiet baaraa' 'êlohiem; 'eet hashaamajiem we'eet haa'aarêts.",
 		)
 
 	def test_sin_in_canonical_order(self) -> None:
 		"""Sin must be spoken "s" although the sin dot follows the sheva in the stream."""
-		self.assertEqual(subStrict(self.dictionary, YISRAEL), "jiesraa'el")
+		self.assertEqual(subStrict(self.dictionary, YISRAEL), "jiesraa'eel")
 
 	def test_bkp_forte_gemination(self) -> None:
 		self.assertEqual(subStrict(self.dictionary, SHABBAT), "shabbaat")
 
 	def test_nonbkp_forte_gemination(self) -> None:
-		self.assertEqual(subStrict(self.dictionary, HAMMELECH), "hammelech")
+		self.assertEqual(subStrict(self.dictionary, HAMMELECH), "hammêlêch")
 
 	def test_tav_forte_gemination(self) -> None:
 		self.assertEqual(subStrict(self.dictionary, ATTAH), "'attaah")
@@ -130,24 +135,27 @@ class HebrewDictTests(unittest.TestCase):
 	def test_furtive_patach(self) -> None:
 		self.assertEqual(subStrict(self.dictionary, RUACH), "roeach")
 
+	def test_furtive_patach_after_tsere(self) -> None:
+		self.assertEqual(subStrict(self.dictionary, MIZBEACH), "miezbeeach")
+
 	def test_mapiq_he_furtive_patach(self) -> None:
 		self.assertEqual(subStrict(self.dictionary, GAVOAH), "gaavoah")
 
 	def test_sheva_before_maqaf(self) -> None:
 		"""Word-final sheva before maqaf is silent; sheva after maqaf is vocal."""
-		self.assertEqual(subStrict(self.dictionary, LECH_LECHA), "lech-lechaa")
+		self.assertEqual(subStrict(self.dictionary, LECH_LECHA), "lêch-lechaa")
 
 	def test_atnach_relocation(self) -> None:
 		"""Atnach pause punctuation lands after the word, not inside it."""
-		self.assertEqual(subStrict(self.dictionary, ELOHIM_ATNACH), "'elohiem;")
+		self.assertEqual(subStrict(self.dictionary, ELOHIM_ATNACH), "'êlohiem;")
 
 	def test_zaqef_relocation(self) -> None:
-		self.assertEqual(subStrict(self.dictionary, ELOHIM_ZAQEF), "'elohiem,")
+		self.assertEqual(subStrict(self.dictionary, ELOHIM_ZAQEF), "'êlohiem,")
 
 	def test_invisible_joiners_around_accents(self) -> None:
 		"""Joiners that sources insert to control mark ordering must not break the word."""
-		self.assertEqual(subStrict(self.dictionary, ELOHIM_CGJ), "'elohiem;")
-		self.assertEqual(subStrict(self.dictionary, ELOHIM_ZWJ), "'elohiem;")
+		self.assertEqual(subStrict(self.dictionary, ELOHIM_CGJ), "'êlohiem;")
+		self.assertEqual(subStrict(self.dictionary, ELOHIM_ZWJ), "'êlohiem;")
 
 	def test_joiners_outside_hebrew_untouched(self) -> None:
 		"""The dictionary is global: emoji ZWJ sequences and Latin joiners must survive."""
@@ -156,10 +164,10 @@ class HebrewDictTests(unittest.TestCase):
 		self.assertEqual(subStrict(self.dictionary, "a\u200bb"), "a\u200bb")
 
 	def test_segol_yod_suffix(self) -> None:
-		self.assertEqual(subStrict(self.dictionary, ELECHA), "'elechaa")
+		self.assertEqual(subStrict(self.dictionary, ELECHA), "'eelêchaa")
 
 	def test_qamats_yod_vav_suffix(self) -> None:
-		self.assertEqual(subStrict(self.dictionary, ELAV), "'elaaw")
+		self.assertEqual(subStrict(self.dictionary, ELAV), "'eelaaw")
 
 	def test_rare_marks_stripped(self) -> None:
 		"""Puncta extraordinaria, nun hafukha, paseq and bidi marks must not reach the synth."""

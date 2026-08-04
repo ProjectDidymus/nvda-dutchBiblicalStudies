@@ -99,8 +99,8 @@
 # doubled letter has restored vowel-yod adjacency.
 # ====================================================================
 \u05B8יו(?![\u05B0-\u05BC\u05C1\u05C2\u05C7\u05D0-\u05EA])	aaw	0	1
-\u05B5י(?![\u05B0-\u05BC\u05C7])	e	0	1
-\u05B6י(?![\u05B0-\u05BC\u05C7])	e	0	1
+\u05B5י(?![\u05B0-\u05BC\u05C7])	ee	0	1
+\u05B6י(?![\u05B0-\u05BC\u05C7])	ê	0	1
 \u05B4י(?![\u05B0-\u05BC\u05C7])	ie	0	1
 \u05B9י(?![\u05B0-\u05BC\u05C7])	o	0	1
 
@@ -137,7 +137,10 @@
 
 # ====================================================================
 # Section 11: Vowel points (niqqud).
-# Sheva here is the vocal fallback for what Section 6 left in place.
+# The e-vowels split three ways, judged by Dutch orthography:
+# 'e' is vocal sheva (Dutch unstressed e is schwa), 'ê' is segol and
+# hataf segol, 'ee' is tsere. Sheva here is the vocal fallback for
+# what Section 6 left in place.
 # Hiriq is 'ie', the Dutch spelling of /i/; the hiriq-yod mater rule
 # above exists to silence the yod, not to change the vowel.
 # ====================================================================
@@ -145,13 +148,13 @@
 ַ	a	0	0
 ָ	aa	0	0
 ׇ	o	0	0
-ֶ	e	0	0
-ֵ	e	0	0
+ֶ	ê	0	0
+ֵ	ee	0	0
 ִ	ie	0	0
 ֹ	o	0	0
 ֺ	o	0	0
 ֻ	oe	0	0
-ֱ	e	0	0
+ֱ	ê	0	0
 ֲ	a	0	0
 ֳ	o	0	0
 
