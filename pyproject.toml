@@ -41,7 +41,7 @@ dependencies = [
 	"regex==2026.4.4",
 ]
 [project.urls]
-Repository = "https://github.com/LeonarddeR/nvda-dutchBiblicalStudies"
+Repository = "https://github.com/ProjectDidymus/nvda-dutchBiblicalStudies"
 
 [tool.ruff]
 line-length = 110
