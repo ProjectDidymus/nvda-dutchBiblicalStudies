@@ -93,14 +93,20 @@ brailleTables: BrailleTables = {
 	"grc-international-nl.utb": {
 		"displayName": _("Greek International Dutch Braille"),
 		"contracted": True,
+		"output": True,
+		"input": True,
 	},
 	"hbo-nl.utb": {
 		"displayName": _("Biblical Hebrew Dutch Braille"),
 		"contracted": True,
+		"output": True,
+		"input": True,
 	},
 	"hbo-nl-cantillated.utb": {
 		"displayName": _("Biblical Hebrew Dutch Braille with cantillation"),
 		"contracted": True,
+		"output": True,
+		"input": True,
 	},
 }
 
@@ -114,9 +120,11 @@ brailleTables: BrailleTables = {
 symbolDictionaries: SymbolDictionaries = {
 	"greek": {
 		"displayName": _("Polythonic Greek"),
+		"mandatory": False,
 	},
 	"hebrew": {
 		"displayName": _("Biblical Hebrew"),
+		"mandatory": False,
 	},
 }
 
