@@ -27,7 +27,7 @@ GREEK_SAMPLES = (JOHN_1_1, JOHN_1_38B, COR_13_4)
 DUTCH = "Dit is gewone tekst; met puntkomma, en 3·4 blijft ook staan."
 
 
-def _greekCodepoints(text: str) -> list[str]:
+def greekCodepoints(text: str) -> list[str]:
 	return [c for c in text if "Ͱ" <= c <= "Ͽ" or "ἀ" <= c <= "῿"]
 
 
@@ -74,7 +74,7 @@ class GreekDictTests(unittest.TestCase):
 		"""Transliteration must be total: no Greek codepoints may reach the synthesizer."""
 		for sample in GREEK_SAMPLES:
 			with self.subTest(sample=sample[:30]):
-				self.assertEqual(_greekCodepoints(subStrict(self.dictionary, sample)), [])
+				self.assertEqual(greekCodepoints(subStrict(self.dictionary, sample)), [])
 
 
 if __name__ == "__main__":

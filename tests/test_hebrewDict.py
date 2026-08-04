@@ -79,7 +79,7 @@ HEBREW_SAMPLES = (
 DUTCH = "Dit is gewone tekst; met leestekens, en 3-4 blijft ook staan."
 
 
-def _hebrewCodepoints(text: str) -> list[str]:
+def hebrewCodepoints(text: str) -> list[str]:
 	return [f"U+{ord(c):04X}" for c in text if "\u0590" <= c <= "\u05ff"]
 
 
@@ -158,7 +158,7 @@ class HebrewDictTests(unittest.TestCase):
 		"""Transliteration must be total: no Hebrew codepoints may reach the synthesizer."""
 		for sample in HEBREW_SAMPLES:
 			with self.subTest(sample=sample[:20]):
-				self.assertEqual(_hebrewCodepoints(subStrict(self.dictionary, sample)), [])
+				self.assertEqual(hebrewCodepoints(subStrict(self.dictionary, sample)), [])
 
 
 if __name__ == "__main__":
