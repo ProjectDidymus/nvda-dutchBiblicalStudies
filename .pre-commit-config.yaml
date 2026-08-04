@@ -2,8 +2,9 @@
 # https://pre-commit.ci/
 # Configuration for Continuous Integration service
 ci:
-  # Pyright does not seem to work in pre-commit CI
-  skip: [pyright]
+  # Pyright does not seem to work in pre-commit CI,
+  # and the unit tests need a sibling NVDA source checkout that pre-commit CI does not have.
+  skip: [pyright, unittests]
   autoupdate_schedule: monthly
   autoupdate_commit_msg: "Pre-commit auto-update"
   autofix_commit_msg: "Pre-commit auto-fix"
@@ -85,3 +86,10 @@ repos:
       entry: uv run pyright
       language: system
       types: [python]
+
+    - id: unittests
+      name: run unit tests
+      entry: uv run python -m unittest discover -s tests -t .
+      language: system
+      pass_filenames: false
+      files: ^(tests/|addon/speechDicts/)
